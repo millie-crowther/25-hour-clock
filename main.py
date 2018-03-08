@@ -41,15 +41,16 @@ def get_digits(start_time):
     return [int(n) for n in result]
 
 def bit_map(digits):
+    # transforms full state of clock into nineteen-element binary vector
     bits_req = [2, 3, 3, 4, 3, 4]
     
     result = []
     for (i, digit) in enumerate(digits):
-        for shift in range(bits_req[i]):
-            result.append(digit & (1 << shift) != 0)
+        result += [digit & (1 << shift) != 0 for shift in range(bits_req[i])]
     return result 
 
 def led_map(digits):
+    # creates a mapping from LEDs on the display to whether or not they are active
     l = lambda digit:  {
         'A' : digit in [0, 2, 3, 5, 6, 8, 9],
         'B' : digit in [0, 1, 2, 3, 4, 7, 8, 9],
