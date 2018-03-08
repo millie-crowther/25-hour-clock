@@ -49,8 +49,8 @@ def bit_map(digits):
             result.append(digit & (1 << shift) != 0)
     return result 
 
-def led_map(digit):
-    return {
+def led_map(digits):
+    l = lambda digit:  {
         'A' : digit in [0, 2, 3, 5, 6, 8, 9],
         'B' : digit in [0, 1, 2, 3, 4, 7, 8, 9],
         'C' : digit in [0, 1, 3, 4, 5, 6, 7, 8, 9],
@@ -60,12 +60,15 @@ def led_map(digit):
         'G' : digit in [2, 3, 4, 5, 6, 8, 9]
     }
 
+    return [l(d) for d in digits]
+
 def main():
     t0 = start_time('--load' in sys.argv)
     while True:
         digits = get_digits(t0)
         print digits
         print bit_map(digits)
+        print led_map(digits)
         time.sleep(rate)
 
 if __name__ == "__main__":
