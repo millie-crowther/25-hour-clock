@@ -56,7 +56,7 @@ def get_pin_map(led_map):
 def get_led_map(digits):
     # creates a mapping from LEDs on the display to whether or not they are active
     l = lambda digit:  {
-        'A' : digit in [0, 2, 3, 5, 6, 8, 9],
+        'A' : digit in [0, 2, 3, 5, 6, 7, 8, 9],
         'B' : digit in [0, 1, 2, 3, 4, 7, 8, 9],
         'C' : digit in [0, 1, 3, 4, 5, 6, 7, 8, 9],
         'D' : digit in [0, 2, 3, 5, 6, 8, 9],
