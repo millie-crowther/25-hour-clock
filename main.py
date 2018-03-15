@@ -1,8 +1,9 @@
 import time
 import sys
+import itertools
 
 # update rate for clock state
-rate = 0.45
+rate = 0.5  
 
 # pin mapping
 #   + first index is digit number: hours = {0, 1}, minutes = {2, 3}, seconds = {4, 5}
@@ -45,13 +46,10 @@ def get_digits(t):
 
     return [int(n) for n in h + m + s]
 
-def get_pin_map(led_map):
+def get_pin_map(led_maps):
     # returns a full pin map for all digits this tick
-    result = {}
-    for digit in range(6):
-        for led, value in led_map[digit].items():
-            result[pin_map[digit][led]] = value
-    return result
+    p = itertools.product(range(6), ['A', 'B', 'C', 'D', 'E', 'F', 'G'])
+    return { pin_map[digit][led]: led_maps[digit][led] for (digit, led) in p }
 
 def get_led_map(digits):
     # creates a mapping from LEDs on the display to whether or not they are active
@@ -67,15 +65,24 @@ def get_led_map(digits):
 
     return [l(d) for d in digits]
 
+def output_to_pins(pins):
+    for (pin, value) in pins.items():
+        GPIO.output(pin, value)
+
 def main():
     t0 = start_time('--load' in sys.argv)
 
     while True:
         t = int(time.time()) - t0
         digits = get_digits(t)
-    
+        leds = get_led_map(digits)
+        pins = get_pin_map(leds)
+
         print digits
-        print get_led_map(digits)
+        print leds
+        print pins
+
+        output_to_pins(pins)
 
         time.sleep(rate)
 
