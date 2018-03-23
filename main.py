@@ -8,15 +8,31 @@ rate = 0.5
 # pin mapping
 #   + first index is digit number: hours = {0, 1}, minutes = {2, 3}, seconds = {4, 5}
 #   + letters correspond to LEDs as defined in data sheet
-#   + numbers correspond to GPIO pins on Pi
+#   + numbers correspond to pin outputs
+#   + 'B' LED omitted on digit 0 since it is always on
+#   + 'D' LED omitted on digits 0, 2 and 4 since it is equivalent to 'A' LED
 pin_map = {
-    0 : { 'A' : 0, 'B' : 0, 'C' : 0, 'D' : 0, 'E' : 0, 'F' : 0, 'G' : 0 },
+    # arduino pins
+    0 : { 'A' : 0, 'C' : 0, 'E' : 0, 'F' : 0, 'G' : 0 },
     1 : { 'A' : 0, 'B' : 0, 'C' : 0, 'D' : 0, 'E' : 0, 'F' : 0, 'G' : 0 },
-    2 : { 'A' : 0, 'B' : 0, 'C' : 0, 'D' : 0, 'E' : 0, 'F' : 0, 'G' : 0 },
-    3 : { 'A' : 0, 'B' : 0, 'C' : 0, 'D' : 0, 'E' : 0, 'F' : 0, 'G' : 0 },
-    4 : { 'A' : 0, 'B' : 0, 'C' : 0, 'D' : 0, 'E' : 0, 'F' : 0, 'G' : 0 },
-    5 : { 'A' : 0, 'B' : 0, 'C' : 0, 'D' : 0, 'E' : 0, 'F' : 0, 'G' : 0 }
+
+    # pi pins
+    2 : { 'A' : 0, 'B' : 1, 'C' : 2, 'E' : 3, 'F' : 4, 'G' : 5 },
+    3 : { 'A' : 6, 'B' : 7, 'C' : 8, 'D' : 9, 'E' : 10, 'F' : 11, 'G' : 12 },
+    4 : { 'A' : 13, 'B' : 14, 'C' : 15, 'E' : 16, 'F' : 17, 'G' : 18 },
+    5 : { 'A' : 19, 'B' : 20, 'C' : 21, 'D' : 22, 'E' : 23, 'F' : 24, 'G' : 25 }
 }
+
+def setup():
+    # set up raspberry pi
+    #GPIO.setmode(GPIO.BCM)
+
+    for digit in [2, 3, 4, 5]:
+        for (led, pin) in pin_map[digit].items():
+            #GPIO.setup(pin, GPIO.OUT)
+            pass
+
+    # TODO: setup arduino
 
 def start_time(from_disk):
     # returns the time the clock started
@@ -46,11 +62,6 @@ def get_digits(t):
 
     return [int(n) for n in h + m + s]
 
-def get_pin_map(led_maps):
-    # returns a full pin map for all digits this tick
-    p = itertools.product(range(6), ['A', 'B', 'C', 'D', 'E', 'F', 'G'])
-    return { pin_map[digit][led]: led_maps[digit][led] for (digit, led) in p }
-
 def get_led_map(digits):
     # creates a mapping from LEDs on the display to whether or not they are active
     l = lambda digit:  {
@@ -65,24 +76,33 @@ def get_led_map(digits):
 
     return [l(d) for d in digits]
 
-def output_to_pins(pins):
-    for (pin, value) in pins.items():
-        GPIO.output(pin, value)
+def output_to_pins(led_maps):
+    for (digit, leds) in pin_map.items():
+        for (led, pin) in leds.items():
+            value = led_maps[digit][led]
+            
+            if digit in [0, 1]:
+                # TODO: output to arduino
+                pass
+            else:
+                # output to raspberry pi 
+                #GPIO.output(pin, value)
+                pass
 
 def main():
     t0 = start_time('--load' in sys.argv)
+ 
+    setup()
 
     while True:
         t = int(time.time()) - t0
         digits = get_digits(t)
         leds = get_led_map(digits)
-        pins = get_pin_map(leds)
 
         print digits
         print leds
-        print pins
 
-        output_to_pins(pins)
+        output_to_pins(leds)
 
         time.sleep(rate)
 
