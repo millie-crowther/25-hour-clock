@@ -1,6 +1,9 @@
 import time
 import sys
 import itertools
+from nanpy import Arduino
+from nanpy import serial_manager
+import RPi.GPIO as GPIO
 
 # update rate for clock state
 rate = 0.5  
@@ -24,15 +27,19 @@ pin_map = {
 }
 
 def setup():
+    # set up arduino
+    serial_manager.connect('/dev/ttyACM0')
+
+    for digit in [0, 1]:
+        for (led, pin) in pin_map[digit].items():
+            Arduino.pinMode(pin, Arduino.OUTPUT)
+   
     # set up raspberry pi
-    #GPIO.setmode(GPIO.BCM)
+    GPIO.setmode(GPIO.BCM)
 
     for digit in [2, 3, 4, 5]:
         for (led, pin) in pin_map[digit].items():
-            #GPIO.setup(pin, GPIO.OUT)
-            pass
-
-    # TODO: setup arduino
+            GPIO.setup(pin, GPIO.OUT)
 
 def start_time(from_disk):
     # returns the time the clock started
@@ -82,12 +89,11 @@ def output_to_pins(led_maps):
             value = led_maps[digit][led]
             
             if digit in [0, 1]:
-                # TODO: output to arduino
-                pass
+                # output to arduino
+                Arduino.digitalWrite(pin, value)
             else:
                 # output to raspberry pi 
-                #GPIO.output(pin, value)
-                pass
+                GPIO.output(pin, value)
 
 def main():
     t0 = start_time('--load' in sys.argv)
