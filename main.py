@@ -16,8 +16,8 @@ rate = 0.5
 #   + 'D' LED omitted on digits 0, 2 and 4 since it is equivalent to 'A' LED
 pin_map = {
     # arduino pins
-    0 : { 'A' : 0, 'C' : 0, 'E' : 0, 'F' : 0, 'G' : 0 },
-    1 : { 'A' : 0, 'B' : 0, 'C' : 0, 'D' : 0, 'E' : 0, 'F' : 0, 'G' : 0 },
+    0 : { 'A' : 4, 'C' : 5, 'E' : 6, 'F' : 7, 'G' : 8 },
+    1 : { 'A' : 9, 'B' : 10, 'C' : 11, 'D' : 12, 'E' : 13, 'F' : 14, 'G' : 15 },
 
     # pi pins
     2 : { 'A' : 0, 'B' : 1, 'C' : 2, 'E' : 3, 'F' : 4, 'G' : 5 },
@@ -30,10 +30,8 @@ arduino = None
 
 def setup():
     # set up arduino
-
-    # this line may need changing while testing
-    # run 'ls /dev/tty*' from console and substitute appropriate value
-    c = SerialManager('/dev/ttyUSB0')
+    usb_port = '/dev/ttyUSB0'
+    c = SerialManager(usb_port)
     global arduino 
     arduino = ArduinoApi(connection = c)
 
