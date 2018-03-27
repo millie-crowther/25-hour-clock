@@ -1,8 +1,8 @@
 import time
 import sys
 import itertools
-from nanpy import Arduino
-from nanpy import serial_manager
+from nanpy import ArduinoApi
+from nanpy import SerialManager
 import RPi.GPIO as GPIO
 
 # update rate for clock state
@@ -26,13 +26,20 @@ pin_map = {
     5 : { 'A' : 19, 'B' : 20, 'C' : 21, 'D' : 22, 'E' : 23, 'F' : 24, 'G' : 25 }
 }
 
+arduino = None
+
 def setup():
     # set up arduino
-    serial_manager.connect('/dev/ttyACM0')
+
+    # this line may need changing while testing
+    # run 'ls /dev/tty*' from console and substitute appropriate value
+    c = SerialManager('/dev/ttyUSB0')
+    global arduino 
+    arduino = ArduinoApi(connection = c)
 
     for digit in [0, 1]:
         for (led, pin) in pin_map[digit].items():
-            Arduino.pinMode(pin, Arduino.OUTPUT)
+            arduino.pinMode(pin, arduino.OUTPUT)
    
     # set up raspberry pi
     GPIO.setmode(GPIO.BCM)
@@ -90,7 +97,8 @@ def output_to_pins(led_maps):
             
             if digit in [0, 1]:
                 # output to arduino
-                Arduino.digitalWrite(pin, value)
+                v = arduino.HIGH if value else arduino.LOW
+                arduino.digitalWrite(pin, v)
             else:
                 # output to raspberry pi 
                 GPIO.output(pin, value)
