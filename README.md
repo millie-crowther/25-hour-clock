@@ -1,7 +1,8 @@
 # 25-hour-clock
 
-* install script 'arduino_install.sh' provided needs to be run on the arduino first
+* install script 'arduino_install.sh' provided needs to be run on the arduino 
   * may need to edit 'nanpy-firmware/Nanpy/cfg.h' but should work fine 
+* install script 'pi_install.sh' needs to be run on pi
 * will then need to correctly set the USB port that the arduino is connected to
   * currently set to default value of '/dev/ttyUSB0' which *should* work fine
   * if it doesn't, run 'ls /dev/tty*' on command line to get the list of ports
