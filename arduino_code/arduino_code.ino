@@ -3,11 +3,8 @@ void setup(){
 }
 
 void output(int digit, int segment, boolean value){
-   Serial.print("rcvd: d=");
    Serial.print(digit);
-   Serial.print(", s=");
    Serial.print(segment);
-   Serial.print(", v=");
    Serial.println(value);
 }
 
