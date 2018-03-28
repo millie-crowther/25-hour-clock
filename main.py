@@ -1,11 +1,13 @@
 import time
-import sys
+import os
 import serial
-
+import sys
 
 # update rate for clock state
 rate = 0.5  
 
+cmd = '~/arduino-1.8.5/arduino --upload --port /dev/ttyACM0 ~/25-hour-clock/arduino_code/arduino_code.ino'
+os.system(cmd)
 
 connection = serial.Serial('/dev/ttyACM0', 9600, timeout=0.050)
 
@@ -31,7 +33,7 @@ def start_time(from_disk):
 
 def get_digits(t):
     # converts uptime to an array of digits
-    h = str((t / 3600) % 24).rjust(2, '0')
+    h = str((t / 3600) % 25).rjust(2, '0')
     m = str((t / 60) % 60).rjust(2, '0')
     s = str(t % 60).rjust(2, '0')
 
@@ -54,11 +56,12 @@ def get_led_map(digits):
 def transmit_to_arduino(led_maps):
     for (digit, leds) in enumerate(led_maps):
         for (led, value) in leds.items():
-            byte = int(value)
-            byte |= digit << 5
-            byte |= led << 2
+            if not (digit == 0 and led == 1 or led == 3 and digit in [0, 2, 4]):
+                byte = int(value)
+                byte |= digit << 5
+                byte |= led << 2
 
-            connection.write(chr(byte))
+                connection.write(chr(byte))
 
 def main():
     t0 = start_time('--load' in sys.argv)
