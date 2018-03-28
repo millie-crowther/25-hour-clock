@@ -1,17 +1,13 @@
 import time
 import sys
-import itertools
-from nanpy import SerialManager
+import serial
+
 
 # update rate for clock state
 rate = 0.5  
 
-connection = None
 
-def setup():
-    port = '/dev/serial0'
-    global connection
-    connection = SerialManager(device=port, baudrate=9600)
+connection = serial.Serial('/dev/ttyACM0', 9600, timeout=0.050)
 
 def start_time(from_disk):
     # returns the time the clock started
@@ -44,29 +40,29 @@ def get_digits(t):
 def get_led_map(digits):
     # creates a mapping from LEDs on the display to whether or not they are active
     l = lambda digit:  {
-        'A' : digit in [0, 2, 3, 5, 6, 7, 8, 9],
-        'B' : digit in [0, 1, 2, 3, 4, 7, 8, 9],
-        'C' : digit in [0, 1, 3, 4, 5, 6, 7, 8, 9],
-        'D' : digit in [0, 2, 3, 5, 6, 8, 9],
-        'E' : digit in [0, 2, 6, 8],
-        'F' : digit in [0, 4, 5, 6, 8, 9],
-        'G' : digit in [2, 3, 4, 5, 6, 8, 9]
+        0 : digit in [0, 2, 3, 5, 6, 7, 8, 9],
+        1 : digit in [0, 1, 2, 3, 4, 7, 8, 9],
+        2 : digit in [0, 1, 3, 4, 5, 6, 7, 8, 9],
+        3 : digit in [0, 2, 3, 5, 6, 8, 9],
+        4 : digit in [0, 2, 6, 8],
+        5 : digit in [0, 4, 5, 6, 8, 9],
+        6 : digit in [2, 3, 4, 5, 6, 8, 9]
     }
 
     return [l(d) for d in digits]
 
 def transmit_to_arduino(led_maps):
-    for leds in led_maps:
+    for (digit, leds) in enumerate(led_maps):
         for (led, value) in leds.items():
-            print('writing \'' + str(value) + '\' to connection')
-            connection.write(value)
-            print connection.readline()
+            byte = int(value)
+            byte |= digit << 5
+            byte |= led << 2
+
+            connection.write(chr(byte))
 
 def main():
     t0 = start_time('--load' in sys.argv)
  
-    setup()
-
     while True:
         t = int(time.time()) - t0
         digits = get_digits(t)
@@ -77,8 +73,9 @@ def main():
 
         transmit_to_arduino(leds)
         
-
-
+        while connection.inWaiting() > 0:
+            print connection.readline()
+        
         time.sleep(rate)
 
 if __name__ == "__main__":
