@@ -6,21 +6,10 @@ import sys
 # update rate for clock state
 rate = 0.5  
 
-cmd1 = '~/arduino-1.8.5/arduino --upload --port /dev/ttyACM0 ~/25-hour-clock/arduino_code/arduino_code.ino'
-cmd2 = '~/arduino-1.8.5/arduino --upload --port /dev/ttyACM1 ~/25-hour-clock/arduino_code/arduino_code.ino'
-cmd3 = '~/arduino-1.8.5/arduino --upload --port /dev/ttyACM2 ~/25-hour-clock/arduino_code/arduino_code.ino'
-os.system(cmd1)
-os.system(cmd2)
-os.system(cmd3)
+cmd = '~/arduino-1.8.5/arduino --upload --port /dev/ttyACM0 ~/25-hour-clock/arduino_code/arduino_code.ino'
+os.system(cmd)
 
-connections = [
-    serial.Serial('/dev/ttyACM0', 9600, timeout=0.050),
-    serial.Serial('/dev/ttyACM1', 9600, timeout=0.050), # TODO: check ports
-    serial.Serial('/dev/ttyACM2', 9600, timeout=0.050)
-]
-
-for i in range(3):
-    connections[i].write(chr(((i * 2) << 5) | 2))
+connection = serial.Serial('/dev/ttyACM0', 9600, timeout=0.050)
 
 def start_time(from_disk):
     # returns the time the clock started
@@ -72,7 +61,8 @@ def transmit_to_arduino(led_maps):
                 byte |= digit << 5
                 byte |= led << 2
 
-                connections[digit / 2].write(chr(byte))
+                connection.write(chr(byte))
+    connection.write(chr(2));
 
 def main():
     t0 = start_time('--load' in sys.argv)
