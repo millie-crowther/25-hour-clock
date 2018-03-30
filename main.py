@@ -11,6 +11,8 @@ os.system(cmd)
 
 connection = serial.Serial('/dev/ttyACM0', 9600, timeout=0.050)
 
+current_state = ['NULL'] * 256
+
 def start_time(from_disk):
     # returns the time the clock started
 
@@ -56,12 +58,17 @@ def get_led_map(digits):
 def transmit_to_arduino(led_maps):
     for (digit, leds) in enumerate(led_maps):
         for (led, value) in leds.items():
-            if not (digit == 0 and led == 1 or led == 3 and digit in [0, 2, 4]):
+            if not ((digit == 0 and led == 1) or (led == 3 and (digit in [0, 2, 4]))):
                 byte = int(value)
                 byte |= digit << 5
                 byte |= led << 2
 
-                connection.write(chr(byte))
+                index = byte & ~1
+                c = current_state[index]
+                if c == 'NULL' or c == (not value):
+                    current_state[index] = value
+                    connection.write(chr(byte))
+                    print 'sending: digit=' + str(digit) + ', led=' + str(led) + ', val=' + str(value)
     connection.write(chr(2));
 
 def main():

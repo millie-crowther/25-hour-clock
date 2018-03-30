@@ -3,7 +3,8 @@ int clockpin = 12;
 int latchpin = 8;
 
 int pins[14] = {
-  6, A5, 2, -1, A4, A3, 3, 5, 10, A0, 9, A1, A2, 7
+  6, A5, 2, -1, A4, A3, 3,
+  5, 10, A0, 9, A1, A2, 7
 };
 
 int pin_vals[14];
@@ -28,7 +29,7 @@ void setup(){
   pinMode(latchpin, OUTPUT);
 
   for (int i = 0; i < 3; i++){
-    data[i] = ~0;
+    data[i] = 0;
   }
 }
 
@@ -48,6 +49,13 @@ void print_led(){
 }
 
 void remember(int digit, int segment, boolean value){
+  /*if (digit == 3){
+    Serial.print("ding! ");
+    Serial.print(segment);
+    Serial.print(", ");
+    Serial.println(value);
+  }*/
+ 
   // smallest second digit
   int pin = -1; 
   int v;
@@ -98,13 +106,13 @@ void remember(int digit, int segment, boolean value){
 
 void loop(){
   if (Serial.available() > 0){
-    byte data = Serial.read();
+    byte pi_data = Serial.read();
 
-    int digit = (data & 224) >> 5;
-    int segment = (data & 28) >> 2;
-    boolean value = data & 1;
+    int digit = (pi_data & 224) >> 5;
+    int segment = (pi_data & 28) >> 2;
+    boolean value = pi_data & 1;
     
-    if (data & 2){
+    if (pi_data & 2){
       print_led();
     } else {
       // output digit
