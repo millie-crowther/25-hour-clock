@@ -1,15 +1,19 @@
-int datapin = 11;
-int clockpin = 12;
-int latchpin = 8;
+int datapin1  = A0;
+int clockpin1 = A2;
+int latchpin1 = A1;
+
+int datapin2  = A3;
+int clockpin2 = A4;
+int latchpin2 = A5;
 
 //data for pins
 int pins[14] = {
-  5, 2, 3, -1, A5, A2, 4,
+  -1, -1, -1, -1, A5, A2, 4,
   13, 6, A4, 9, A0, A1, 10
 };
 
 // data for shift registers
-byte data[3];
+byte data[4];
 int bits[28] = {
   4, -1, 5, -1, 12, 13, 6,
   15, 11, 2, 8, 0, 7, 14,
@@ -25,13 +29,18 @@ void setup(){
   for (int i = 2; i < 14; i++){
     pinMode(i, OUTPUT);
   }
+
+  for (int i = 2; i < 4; i++){
+    digitalWrite(i, LOW);
+  }
+
+  for (int i = 4; i < 7; i++){ 
+    digitalWrite(i, HIGH);
+  }
+
   
   for (int i = A0; i <= A5; i++){
     pinMode(i, OUTPUT);
-  }
-
-  for (int i = 0; i < 3; i++){
-    data[i] = 0;
   }
 
   time_of_last_update = millis();
@@ -46,7 +55,7 @@ int level(boolean v){
 }
 
 void output_pins_digit(int digit, int val){
-  boolean segments[6];
+  boolean segments[7];
   segments[0] = val != 1 && val != 4;
   segments[1] = val != 5 && val != 6;
   segments[2] = val != 2;
@@ -58,21 +67,16 @@ void output_pins_digit(int digit, int val){
   if (digit == 4 || digit == 5){
     int offset = (digit - 4) * 7;
     for (int i = 0; i < 7; i++){
-      if (pins[i + offset] != -1){
-        digitalWrite(pins[i + offset], level(segments[i]));
-      }
-      if (digit == 5 && i == 6){
-        Serial.print("j=");
-        Serial.print(pins[i+offset]);
-        Serial.print("s=");
-        Serial.println(segments[6]);
+      int p = pins[i + offset];
+      if (p != -1){
+        //digitalWrite(p, level(segments[i]));
       }
     }
   }
 
   if (digit == 3){
-    digitalWrite(A3, segments[1]);
-    digitalWrite(7, segments[2]);
+    //digitalWrite(A3, segments[1]);
+    //digitalWrite(7, segments[2]);
   }
 }
 
@@ -90,7 +94,7 @@ void output_shift_digit(int digit, boolean val){
     if (segments[i]){
       int bit = bits[digit * 7 + i];
       if (bit != -1){
-        data[bit / 8] |= 1 << (bit % 8);
+        //data[bit / 8] |= 1 << (bit % 8);
       }
     }
   }
@@ -123,11 +127,15 @@ void output(){
     output_shift_digit(digit, digits[digit]);
   }
 
-  digitalWrite(latchpin, LOW);
-  for (int i = 2; i >= 0; i--){
-    shiftOut(datapin, clockpin, MSBFIRST, ~data[i]);
-  }
-  digitalWrite(latchpin, HIGH);
+  digitalWrite(latchpin1, LOW);
+  shiftOut(datapin1, clockpin1, MSBFIRST, ~data[3]);
+  shiftOut(datapin1, clockpin1, MSBFIRST, ~data[2]);
+  digitalWrite(latchpin1, HIGH);
+  
+  digitalWrite(latchpin2, LOW);
+  shiftOut(datapin2, clockpin2, MSBFIRST, ~data[1]);
+  shiftOut(datapin2, clockpin2, MSBFIRST, ~data[0]);
+  digitalWrite(latchpin2, HIGH);
 }
 
 int current_time(){
