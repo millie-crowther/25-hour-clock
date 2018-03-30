@@ -2,14 +2,22 @@ int datapin = 11;
 int clockpin = 12;
 int latchpin = 8;
 
+//data for pins
+int pin_vals[14];
 int pins[14] = {
   6, A5, 2, -1, A4, A3, 3,
   5, 10, A0, 9, A1, A2, 7
 };
 
-int pin_vals[14];
+// data for shift registers
 byte data[3];
-
+int bits[] = {
+  4, -1, 5, -1, 12, 13, 6,
+  15, 11, 2, 8, 0, 7, 14,
+  3, 19, 17, -1, 9, 10, 1,
+  18, 16, -1, 23, 21, 20, 22
+};
+  
 void setup(){
   Serial.begin(9600);
   for (int i = 2; i < 11; i++){
@@ -49,13 +57,6 @@ void print_led(){
 }
 
 void remember(int digit, int segment, boolean value){
-  /*if (digit == 3){
-    Serial.print("ding! ");
-    Serial.print(segment);
-    Serial.print(", ");
-    Serial.println(value);
-  }*/
- 
   // smallest second digit
   int pin = -1; 
   int v;
@@ -81,13 +82,6 @@ void remember(int digit, int segment, boolean value){
   }
 
   // output to shift register
-  int bits[] = {
-    4, -1, 5, -1, 12, 13, 6,
-    15, 11, 2, 8, 0, 7, 14,
-    3, 19, 17, -1, 9, 10, 1,
-    18, 16, -1, 23, 21, 20, 22
-  };
-  
   if (digit < 0 || digit > 3){
     return;
   }
@@ -115,7 +109,6 @@ void loop(){
     if (pi_data & 2){
       print_led();
     } else {
-      // output digit
       remember(digit, segment, value);
     }
   }

@@ -69,6 +69,9 @@ def transmit_to_arduino(led_maps):
                     current_state[index] = value
                     connection.write(chr(byte))
                     print 'sending: digit=' + str(digit) + ', led=' + str(led) + ', val=' + str(value)
+    
+    # write a byte with second bit set, indicating that arduino should print
+    # this ensures segments update at same time
     connection.write(chr(2));
 
 def main():
