@@ -3,10 +3,11 @@ int clockpin = 12;
 int latchpin = 8;
 
 //data for pins
-int pin_vals[14];
+int digital_vals[14];
+int analogue_vals[6];
 int pins[14] = {
-  6, A5, 2, -1, A4, A3, 3,
-  5, 10, A0, 9, A1, A2, 7
+  5, 2, 3, -1, A5, A2, 4,
+  13, 6, A4, 9, A0, A1, 10
 };
 
 // data for shift registers
@@ -35,6 +36,7 @@ void setup(){
   pinMode(datapin, OUTPUT);
   pinMode(clockpin, OUTPUT);
   pinMode(latchpin, OUTPUT);
+  pinMode(13, OUTPUT);
 
   for (int i = 0; i < 3; i++){
     data[i] = 0;
@@ -42,15 +44,19 @@ void setup(){
 }
 
 void print_led(){
-  for (int i = 0; i < 14; i++){
-    if (pins[i] != -1){
-      digitalWrite(pins[i], pin_vals[i]);
+  for (int i = 2; i < 14; i++){
+    if (i != 8 && i != 11 && i != 12){
+      digitalWrite(i, digital_vals[i]);
     }
+  }
+
+  for (int i = 0; i < 6; i++){
+    digitalWrite(i + A0, analogue_vals[i]);
   }
 
   //data = ~data; 
   digitalWrite(latchpin, LOW);
-  for (int i = 3; i >= 0; i--){
+  for (int i = 2; i >= 0; i--){
     shiftOut(datapin, clockpin, MSBFIRST, ~data[i]);
   }
   digitalWrite(latchpin, HIGH);
@@ -68,16 +74,25 @@ void remember(int digit, int segment, boolean value){
 
   // output directly from pins
   
-  if (digit == 5 || (digit == 4 && segment != 3)){
+  if (digit == 5 || digit == 4){
     pin = pins[(digit - 4) * 7 + segment];
   }
 
-  if (digit == 3 && segment == 2){
-    pin = 4;
+  if (digit == 3){
+    if (segment == 1){
+      pin = A3;
+    }
+    if (segment == 2){
+      pin = 7;
+    }
   }
 
   if (pin != -1){
-    pin_vals[(digit - 4) * 7 + segment] = v;
+    if (pin > 2 && pin < 14){
+      digital_vals[pin] = v;
+    } else {
+      analogue_pins[pin - A0] = v;
+    }
     return;
   }
 
@@ -105,10 +120,23 @@ void loop(){
     int digit = (pi_data & 224) >> 5;
     int segment = (pi_data & 28) >> 2;
     boolean value = pi_data & 1;
-    
+   /* 
+    for (int i = 2; i < 14; i++){
+      if (i != 8 && i != 11 & i != 12){
+        digitalWrite(i, LOW);
+      }
+    }
+
+    for (int i = A0; i <= A5; i++){
+      digitalWrite(i, LOW);
+    }*/
+
     if (pi_data & 2){
       print_led();
     } else {
+      /*Serial.print(digit);
+      Serial.print(segment);
+      Serial.println(value);*/
       remember(digit, segment, value);
     }
   }
