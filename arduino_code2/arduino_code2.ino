@@ -1,19 +1,15 @@
-int datapin1  = A0;
-int clockpin1 = A2;
-int latchpin1 = A1;
-
-int datapin2  = A3;
-int clockpin2 = A4;
-int latchpin2 = A5;
+int datapin  = A0;
+int clockpin = A2;
+int latchpin = A1;
 
 //data for pins
 int pins[14] = {
-  -1, -1, -1, -1, A5, A2, 4,
-  13, 6, A4, 9, A0, A1, 10
+  -1, -1, -1, -1, A5, -1, 4,
+  13, 6, A4, 9, -1, -1, 10
 };
 
 // data for shift registers
-byte data[4];
+byte data[3];
 int bits[28] = {
   4, -1, 5, -1, 12, 13, 6,
   15, 11, 2, 8, 0, 7, 14,
@@ -30,15 +26,6 @@ void setup(){
     pinMode(i, OUTPUT);
   }
 
-  for (int i = 2; i < 4; i++){
-    digitalWrite(i, LOW);
-  }
-
-  for (int i = 4; i < 7; i++){ 
-    digitalWrite(i, HIGH);
-  }
-
-  
   for (int i = A0; i <= A5; i++){
     pinMode(i, OUTPUT);
   }
@@ -54,22 +41,37 @@ int level(boolean v){
   }
 }
 
-void output_pins_digit(int digit, int val){
-  boolean segments[7];
-  segments[0] = val != 1 && val != 4;
-  segments[1] = val != 5 && val != 6;
-  segments[2] = val != 2;
-  segments[3] = val != 1 && val != 4 && val != 7;
-  segments[4] = val == 0 || val == 2 || val == 6 || val == 8;
-  segments[5] = val != 1 && val != 2 && val != 3 && val != 7;
-  segments[6] = val != 0 && val != 1 && val != 7;
+boolean get_value(int number, int segment){
+  if (segment == 0){
+    return val != 1 && val != 4;
 
+  } else if (segment == 1){
+    return val != 5 && val != 6;
+
+  } else if (segment == 2){
+    return val != 2;
+
+  } else if (segment == 3){
+    return val != 1 && val != 4 && val != 7;
+
+  } else if (segment == 4){
+    return val == 0 || val == 2 || val == 6 || val == 8;
+
+  } else if (segment == 5){
+    return val != 1 && val != 2 && val != 3 && val != 7;
+
+  } else {
+    return val != 0 && val != 1 && val != 7;
+  }
+}
+
+void output_pins_digit(int digit, int val){
   if (digit == 4 || digit == 5){
     int offset = (digit - 4) * 7;
-    for (int i = 0; i < 7; i++){
-      int p = pins[i + offset];
+    for (int segment = 0; segment < 7; segment++){
+      int p = pins[segment + offset];
       if (p != -1){
-        digitalWrite(p, level(segments[i]));
+        digitalWrite(p, level(get_value(val, segment)));
       }
     }
   }
@@ -80,19 +82,10 @@ void output_pins_digit(int digit, int val){
   }
 }
 
-void output_shift_digit(int digit, boolean val){
-  boolean segments[7];
-  segments[0] = val != 1 && val != 4;
-  segments[1] = val != 5 && val != 6;
-  segments[2] = val != 2;
-  segments[3] = val != 1 && val != 4 && val != 7;
-  segments[4] = val == 0 || val == 2 || val == 6 || val == 8;
-  segments[5] = val != 1 && val != 2 && val != 3 && val != 7;
-  segments[6] = val != 0 && val != 1 && val != 7;
-
-  for (int i = 0; i < 7; i++){
-    if (segments[i]){
-      int bit = bits[digit * 7 + i];
+void output_shift_digit(int digit, int val){
+  for (int segment = 0; segment < 7; segment++){
+    if (get_value(val, segment)){
+      int bit = bits[digit * 7 + segment];
       if (bit != -1){
         data[bit / 8] |= 1 << (bit % 8);
       }
@@ -127,15 +120,11 @@ void output(){
     output_shift_digit(digit, digits[digit]);
   }
 
-  digitalWrite(latchpin1, LOW);
-  shiftOut(datapin1, clockpin1, MSBFIRST, ~data[3]);
-  shiftOut(datapin1, clockpin1, MSBFIRST, ~data[2]);
-  digitalWrite(latchpin1, HIGH);
-  
-  digitalWrite(latchpin2, LOW);
-  shiftOut(datapin2, clockpin2, MSBFIRST, ~data[1]);
-  shiftOut(datapin2, clockpin2, MSBFIRST, ~data[0]);
-  digitalWrite(latchpin2, HIGH);
+  digitalWrite(latchpin, LOW);
+  shiftOut(datapin, clockpin, MSBFIRST, ~data[2]);
+  shiftOut(datapin, clockpin, MSBFIRST, ~data[1]);
+  shiftOut(datapin, clockpin, MSBFIRST, ~data[0]);
+  digitalWrite(latchpin, HIGH);
 }
 
 int current_time(){
