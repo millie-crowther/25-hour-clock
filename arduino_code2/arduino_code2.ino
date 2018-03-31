@@ -69,14 +69,14 @@ void output_pins_digit(int digit, int val){
     for (int i = 0; i < 7; i++){
       int p = pins[i + offset];
       if (p != -1){
-        //digitalWrite(p, level(segments[i]));
+        digitalWrite(p, level(segments[i]));
       }
     }
   }
 
   if (digit == 3){
-    //digitalWrite(A3, segments[1]);
-    //digitalWrite(7, segments[2]);
+    digitalWrite(A3, segments[1]);
+    digitalWrite(7, segments[2]);
   }
 }
 
@@ -94,7 +94,7 @@ void output_shift_digit(int digit, boolean val){
     if (segments[i]){
       int bit = bits[digit * 7 + i];
       if (bit != -1){
-        //data[bit / 8] |= 1 << (bit % 8);
+        data[bit / 8] |= 1 << (bit % 8);
       }
     }
   }
