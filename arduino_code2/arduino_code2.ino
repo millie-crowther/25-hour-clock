@@ -1,6 +1,6 @@
-int datapin  = A0;
-int clockpin = A2;
-int latchpin = A1;
+int datapin  = 5;
+int clockpin = 2;
+int latchpin = 3;
 
 //data for pins
 int pins[14] = {
