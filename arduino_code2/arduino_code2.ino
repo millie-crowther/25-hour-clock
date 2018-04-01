@@ -3,18 +3,24 @@ int clockpin = 2;
 int latchpin = 3;
 
 //data for pins
-int pins[14] = {
-  -1, -1, -1, -1, A5, -1, 4,
-  13, 6, A4, 9, -1, -1, 10
+int pins[42] = {
+  -1, -1, -1, -1, -1, -1, -1, // 0
+  -1, -1, -1, -1, -1, -1, -1, // 1
+  A5, -1, -1, -1, -1,  4, -1, // 2
+  11, A2, A3, A4, A1, -1, A0, // 3
+  10, -1, 12, -1, 13, -1, -1, // 4
+  -1, -1,  6, -1,  8,  9, -1  // 5
 };
 
 // data for shift registers
 byte data[3];
-int bits[28] = {
-  4, -1, 5, -1, 12, 13, 6,
-  15, 11, 2, 8, 0, 7, 14,
-  3, 19, 17, -1, 9, 10, 1,
-  18, 16, -1, 23, 21, 20, 22
+int bits[42] = {
+  -1, 12,  3, 13,  4, 14, -1, // 0
+   2,  6, 15,  5,  8, 10,  0, // 1
+  -1,  9,  1, 11,  7, -1, -1, // 2
+  20, -1, -1, -1, -1, 19, -1, // 3
+  -1, 18, -1, 17, -1, 16, -1, // 4
+  -1, 22, -1, 23, -1, -1, 21  // 5
 };
 
 int time_at_last_update;
@@ -31,14 +37,6 @@ void setup(){
   }
 
   time_of_last_update = millis();
-}
-
-int level(boolean v){
-  if (v){
-    return LOW;
-  } else {
-    return HIGH;
-  }
 }
 
 boolean get_value(int val, int segment){
@@ -65,54 +63,37 @@ boolean get_value(int val, int segment){
   }
 }
 
-void output_pins_digit(int digit, int val){
-  if (digit == 4 || digit == 5){
-    int offset = (digit - 4) * 7;
-    for (int segment = 0; segment < 7; segment++){
-      int p = pins[segment + offset];
-      if (p != -1){
-        digitalWrite(p, level(get_value(val, segment)));
-      }
-    }
-  }
-}
-
-void output_shift_digit(int digit, int val){
-  for (int segment = 0; segment < 7; segment++){
-    if (get_value(val, segment)){
-      int bit = bits[digit * 7 + segment];
-      if (bit != -1){
-        data[bit / 8] |= 1 << (bit % 8);
-      }
-    }
-  }
-}
-
 void output(){
   int t = current_time();
   int h = (t / 3600) % 25;
   int m = (t / 60) % 60;
   int s = t % 60;
 
-  int digits[6];
-  digits[0] = h / 10;
-  digits[1] = h % 10;
-  digits[2] = m / 10;
-  digits[3] = m % 10;
-  digits[4] = s / 10;
-  digits[5] = s % 10;
-
-  for (int i = 3; i < 6; i++){
-    //output_pins_digit(i, digits[i]);
-  }
+  int digits[6] {
+    h / 10, h % 10,
+    m / 10, m % 10,
+    s / 10, s % 10
+  };
 
   // do shift register output
   for (int i = 0; i < 3; i++){
-    //data[i] = 0;
+    data[i] = 0;
   }
 
-  for (int digit = 0; digit < 4; digit++){
-    //output_shift_digit(digit, digits[digit]);
+  for (int i = 0; i < 42; i++){
+    int digit = i / 7;
+    int segment = i % 7;
+    
+    boolean isOn = get_value(digits[digit], segment);
+    
+    if (pins[i] != -1){
+      digitalWrite(i, isOn ? LOW : HIGH);
+    }
+
+    int b = bits[i];
+    if (b != -1 && isOn){
+      data[b / 8] |= 1 << (b % 8);
+    }  
   }
 
   digitalWrite(latchpin, LOW);
@@ -138,22 +119,8 @@ void loop(){
     }
     delay(10);
   }
-
-  for (int i = 0; i < 3; i++){
-    data[i] = ~0;
-  }
-
-  for (int i = 4; i < 14; i++){
-    if (i != 5 && i != 7){
-      digitalWrite(i, LOW);
-    }
-  }
-
-  for (int i = A0; i <= A5; i++){
-    digitalWrite(i, LOW);
-  }
   
   output();
-  delay(500);
+  delay(200);
 }
 
