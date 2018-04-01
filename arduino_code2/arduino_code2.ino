@@ -75,11 +75,6 @@ void output_pins_digit(int digit, int val){
       }
     }
   }
-
-  if (digit == 3){
-    digitalWrite(A3, segments[1]);
-    digitalWrite(7, segments[2]);
-  }
 }
 
 void output_shift_digit(int digit, int val){
