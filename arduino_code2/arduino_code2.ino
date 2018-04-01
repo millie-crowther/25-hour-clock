@@ -139,24 +139,6 @@ void loop(){
     delay(10);
   }
 
-  
-  for (int i = 0; i < 3; i++){
-    data[i] = 0;
-  }
-  
-  for (int i = 4; i < 14; i++){
-    if (i != 5 && i != 7){
-      digitalWrite(i, HIGH);
-    }
-  }
-
-  for (int i = A0; i <= A5; i++){
-    digitalWrite(i, HIGH);
-  }
-
-  output();
-  delay(500);
-
   for (int i = 0; i < 3; i++){
     data[i] = ~0;
   }
