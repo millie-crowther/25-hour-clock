@@ -103,16 +103,16 @@ void output(){
   digits[5] = s % 10;
 
   for (int i = 3; i < 6; i++){
-    output_pins_digit(i, digits[i]);
+    //output_pins_digit(i, digits[i]);
   }
 
   // do shift register output
   for (int i = 0; i < 3; i++){
-    data[i] = 0;
+    //data[i] = 0;
   }
 
   for (int digit = 0; digit < 4; digit++){
-    output_shift_digit(digit, digits[digit]);
+    //output_shift_digit(digit, digits[digit]);
   }
 
   digitalWrite(latchpin, LOW);
@@ -139,8 +139,19 @@ void loop(){
     delay(10);
   }
 
-  delay(200);
+  
+  for (int i = 0; i < 3; i++){
+    data[i] = 0;
+  }
 
   output();
+  delay(500);
+
+  for (int i = 0; i < 3; i++){
+    data[i] = ~0;
+  }
+
+  output();
+  delay(500);
 }
 
