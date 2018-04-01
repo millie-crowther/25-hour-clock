@@ -41,7 +41,7 @@ int level(boolean v){
   }
 }
 
-boolean get_value(int number, int segment){
+boolean get_value(int val, int segment){
   if (segment == 0){
     return val != 1 && val != 4;
 
