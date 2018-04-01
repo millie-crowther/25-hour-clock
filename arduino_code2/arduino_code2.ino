@@ -168,7 +168,7 @@ void loop(){
   }
 
   for (int i = A0; i <= A5; i++){
-    digitalWrite(i, Low);
+    digitalWrite(i, LOW);
   }
   
   output();
