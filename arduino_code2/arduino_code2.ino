@@ -75,24 +75,22 @@ void output(){
   };
 
   // do shift register output
-  byte data[3];
-  for (int i = 0; i < 3; i++){
-    data[i] = 0;
-  }
+  byte data[3] = { 0, 0, 0 };
 
-  for (int i = 0; i < 42; i++){
-    int digit = i / 7;
-    int segment = i % 7;
+  for (int digit = 0; digit < 6; digit++){
+    for (int segment = 0; segment < 7; segment++){
+      int i = digit * 7 + segment;
     
-    boolean isOn = get_value(digits[digit], segment);
+      boolean isOn = get_value(digits[digit], segment);
     
-    if (pins[i] != -1){
-      digitalWrite(pins[i], isOn ? LOW : HIGH);
-    }
+      if (pins[i] != -1){
+        digitalWrite(pins[i], isOn ? LOW : HIGH);
+      }
 
-    int b = bits[i];
-    if (b != -1 && isOn){
-      data[b / 8] |= 1 << (b % 8);
+      int b = bits[i];
+      if (b != -1 && isOn){
+        data[b / 8] |= 1 << (b % 8);
+      }
     }  
   }
 
@@ -117,6 +115,6 @@ void loop(){
   }
   
   output();
-  delay(1000);
+  delay(500);
 }
 
