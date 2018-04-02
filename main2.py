@@ -28,6 +28,7 @@ def start_time(from_disk):
             pass
 
     # start clock from now as fallback
+    print "starting from now"
     result = int(time.time())
     f = open('start_time.txt', 'w')
     f.write(str(result))    
