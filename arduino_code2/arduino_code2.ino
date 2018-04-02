@@ -13,7 +13,6 @@ int pins[42] = {
 };
 
 // data for shift registers
-byte data[3];
 int bits[42] = {
   12, -1, 14, -1,  4,  3, 13, // 0
    6,  2, 10,  0,  8, 15,  5, // 1
@@ -76,6 +75,7 @@ void output(){
   };
 
   // do shift register output
+  byte data[3];
   for (int i = 0; i < 3; i++){
     data[i] = 0;
   }
@@ -117,6 +117,6 @@ void loop(){
   }
   
   output();
-  delay(200);
+  delay(1000);
 }
 
