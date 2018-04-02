@@ -22,8 +22,8 @@ int bits[42] = {
   22, 20, -1, 21, -1, -1, 23, // 5
 };
 
-int time_at_last_update;
-unsigned long time_of_last_update;
+int start;
+unsigned long last_update;
 
 void setup(){
   Serial.begin(9600);
@@ -35,7 +35,7 @@ void setup(){
     pinMode(i, OUTPUT);
   }
 
-  time_of_last_update = millis();
+  last_update = millis();
 }
 
 boolean get_value(int val, int segment){
@@ -59,11 +59,11 @@ boolean get_value(int val, int segment){
 
   } else {
     return val != 0 && val != 1 && val != 7;
-  }
+  } 
 }
 
 void output(){
-  int t = time_at_last_update + ((int) ((millis() - time_of_last_update) / 1000));
+  int t = start + ((int) ((millis() - last_update) / 1000));
   int h = (t / 3600) % 25;
   int m = (t / 60) % 60;
   int s = t % 60;
@@ -75,12 +75,11 @@ void output(){
   };
 
   // do shift register output
-  byte data[3] = { 0, 0, 0 };
+  byte data[3] = {0, 0, 0};
 
   for (int digit = 0; digit < 6; digit++){
     for (int segment = 0; segment < 7; segment++){
       int i = digit * 7 + segment;
-    
       boolean isOn = get_value(digits[digit], segment);
     
       if (pins[i] != -1){
@@ -88,17 +87,17 @@ void output(){
       }
 
       int b = bits[i];
-      if (b != -1 && isOn){
+      if (b != -1 && isOn && b != 23){
         data[b / 8] |= 1 << (b % 8);
       }
     }  
-  }
-
-  digitalWrite(latchpin, LOW);
+  } 
+ 
+  digitalWrite(latchpin, HIGH);
   shiftOut(datapin, clockpin, MSBFIRST, ~data[2]);
   shiftOut(datapin, clockpin, MSBFIRST, ~data[1]);
   shiftOut(datapin, clockpin, MSBFIRST, ~data[0]);
-  digitalWrite(latchpin, HIGH);
+  digitalWrite(latchpin, LOW);
 }
 
 void loop(){  
@@ -106,8 +105,10 @@ void loop(){
   while (Serial.available()){
     char c = Serial.read();
     if (c == '.'){
-      time_at_last_update = t.toInt();
-      time_of_last_update = millis();
+      start = t.toInt();
+      last_update = millis();
+      Serial.print("ack");
+      Serial.println(t);
     } else {
       t.concat(c);
     }
@@ -115,6 +116,5 @@ void loop(){
   }
   
   output();
-  delay(500);
 }
 

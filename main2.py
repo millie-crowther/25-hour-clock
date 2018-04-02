@@ -4,7 +4,7 @@ import serial
 import sys
 
 # update rate for clock state
-rate = 10 
+rate = 60 
 
 cmd = '~/arduino-1.8.5/arduino --upload --port /dev/ttyACM0 ~/25-hour-clock/arduino_code2/arduino_code2.ino'
 os.system(cmd)
@@ -40,12 +40,9 @@ def main():
         t = int(time.time()) - t0
         connection.write(str(t) + '.')
        
-        for i in range(10):
-            time.sleep(rate / 10) 
-            while connection.inWaiting() > 0:
-                print connection.readline()
-        
-        time.sleep(rate)
+        time.sleep(rate) 
+        while connection.inWaiting() > 0:
+            print connection.readline()
 
 if __name__ == "__main__":
     main()
