@@ -6,21 +6,21 @@ int latchpin = 3;
 int pins[42] = {
   -1, -1, -1, -1, -1, -1, -1, // 0
   -1, -1, -1, -1, -1, -1, -1, // 1
-  A5, -1, -1, -1, -1,  4, -1, // 2
-  11, A2, A3, A4, A1, -1, A0, // 3
-  10, -1, 12, -1, 13, -1, -1, // 4
-  -1, -1,  6, -1,  8,  9, -1  // 5
+  -1, A5,  4, -1, -1, -1, -1, // 2
+  A2, 11, -1, A0, A1, A3, A4, // 3
+  -1, 10, -1, -1, 13, 12, -1, // 4
+  -1, -1,  9, -1,  8,  6, -1, // 5
 };
 
 // data for shift registers
 byte data[3];
 int bits[42] = {
-  -1, 12,  3, 13,  4, 14, -1, // 0
-   2,  6, 15,  5,  8, 10,  0, // 1
-  -1,  9,  1, 11,  7, -1, -1, // 2
-  20, -1, -1, -1, -1, 19, -1, // 3
-  -1, 18, -1, 17, -1, 16, -1, // 4
-  -1, 22, -1, 23, -1, -1, 21  // 5
+  12, -1, 14, -1,  4,  3, 13, // 0
+   6,  2, 10,  0,  8, 15,  5, // 1
+   9, -1, -1, -1,  7,  1, 11, // 2
+  -1, 20, -1, -1, -1, 19, -1, // 3
+  18, -1, 16, -1, -1, -1, 17, // 4
+  22, -1, -1, 21, -1, -1, 23, // 5
 };
 
 int time_at_last_update;
@@ -64,7 +64,7 @@ boolean get_value(int val, int segment){
 }
 
 void output(){
-  int t = current_time();
+  int t = time_at_last_update + (millis() - time_of_last_update) / 1000;
   int h = (t / 3600) % 25;
   int m = (t / 60) % 60;
   int s = t % 60;
@@ -101,10 +101,6 @@ void output(){
   shiftOut(datapin, clockpin, MSBFIRST, ~data[1]);
   shiftOut(datapin, clockpin, MSBFIRST, ~data[0]);
   digitalWrite(latchpin, HIGH);
-}
-
-int current_time(){
-  return time_at_last_update + (millis() - time_of_last_update) / 1000;
 }
 
 void loop(){  

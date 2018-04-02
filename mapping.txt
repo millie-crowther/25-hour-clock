@@ -1,53 +1,53 @@
 pins
 2  clock 
-3  latch
-4  d 2 s 5
+3  latch 
+4  d 2 s 5     - 2     
 5  data
-6  d 5 s 2
+6  d 5 s 1     - 5 
 7  
-8  d 5 s 4
-9  d 5 s 5
-10 d 4 s 0
-11 d 3 s 0 
-12 d 4 s 2
-13 d 4 s 4 
-A0 d 3 s 6
-A1 d 3 s 4
-A2 d 3 s 1
-A3 d 3 s 2
-A4 d 3 s 3
-A5 d 2 s 0
+8  d 5 s 3     - 4
+9  d 5 s 5     - 2
+10 d 4 s 6     - 1
+11 d 3 s 6     - 1
+12 d 4 s 1     - 5
+13 d 4 s 3     - 4
+A0 d 3 s 4     - 3
+A1 d 3 s 3     - 4
+A2 d 3 s 0     - 0
+A3 d 3 s 1     - 5
+A4 d 3 s 2     - 6
+A5 d 2 s 6     - 1
 
 shift registers
 
 register 1
-0 d 1 s 6
-1 d 2 s 2
-2 d 1 s 0
-3 d 0 s 2
-4 d 0 s 4
-5 d 1 s 3
-6 d 1 s 1
-7 d 2 s 4
-
+ 0 d 1 s 4      - 3
+ 1 d 2 s 1      - 5
+ 2 d 1 s 6      - 1
+ 3 d 0 s 1      - 5
+ 4 d 0 s 3      - 4
+ 5 d 1 s 2      - 6
+ 6 d 1 s 0      - 0
+ 7 d 2 s 3      - 4
+ 
 register 2
-0 d 1 s 4
-1 d 2 s 1
-2 d 1 s 5
-3 d 2 s 3
-4 d 0 s 1
-5 d 0 s 3
-6 d 0 s 5
-7 d 1 s 2
+ 8 d 1 s 3      - 4 
+ 9 d 2 s 0 + 4  - 0
+10 d 1 s 5      - 2
+11 d 2 s 2      - 6
+12 d 0 s 0 + 4  - 0  
+13 d 0 s 2      - 6
+14 d 0 s 5      - 2
+15 d 1 s 1      - 5
 
 
 register 3
-0 d 4 s 5
-1 d 4 s 3
-2 d 4 s 1
-3 d 3 s 5
-4 d 3 s 0
-5 d 5 s 6
-6 d 5 s 1
-7 d 5 s 3
+16 d 4 s 5      - 2
+17 d 4 s 2      - 6
+18 d 4 s 0 + 4  - 0
+19 d 3 s 5      - 2
+20 d 3 s 6      - 1
+21 d 5 s 4      - 3
+22 d 5 s 0      - 0
+23 d 5 s 2      - 6
 
