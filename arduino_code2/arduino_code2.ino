@@ -87,7 +87,7 @@ void output(){
     boolean isOn = get_value(digits[digit], segment);
     
     if (pins[i] != -1){
-      digitalWrite(i, isOn ? LOW : HIGH);
+      digitalWrite(pins[i], isOn ? LOW : HIGH);
     }
 
     int b = bits[i];
