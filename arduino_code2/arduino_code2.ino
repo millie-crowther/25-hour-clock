@@ -18,9 +18,9 @@ int bits[42] = {
   12, -1, 14, -1,  4,  3, 13, // 0
    6,  2, 10,  0,  8, 15,  5, // 1
    9, -1, -1, -1,  7,  1, 11, // 2
-  -1, 20, -1, -1, -1, 19, -1, // 3
+  -1, -1, 19, -1, -1, -1, -1, // 3
   18, -1, 16, -1, -1, -1, 17, // 4
-  22, -1, -1, 21, -1, -1, 23, // 5
+  22, 20, -1, 21, -1, -1, 23, // 5
 };
 
 int time_at_last_update;
@@ -64,12 +64,12 @@ boolean get_value(int val, int segment){
 }
 
 void output(){
-  int t = time_at_last_update + (millis() - time_of_last_update) / 1000;
+  int t = time_at_last_update + ((int) ((millis() - time_of_last_update) / 1000));
   int h = (t / 3600) % 25;
   int m = (t / 60) % 60;
   int s = t % 60;
 
-  int digits[6] {
+  int digits[6] = {
     h / 10, h % 10,
     m / 10, m % 10,
     s / 10, s % 10
