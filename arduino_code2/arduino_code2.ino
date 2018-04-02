@@ -116,5 +116,6 @@ void loop(){
   }
   
   output();
+  delay(10);
 }
 

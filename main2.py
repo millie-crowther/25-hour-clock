@@ -22,6 +22,7 @@ def start_time(from_disk):
             f = open('start_time.txt', 'r') 
             result = int(f.readlines()[0].strip())
             f.close()
+            print "loading from start time: " + str(result)
             return result
         except:
             pass
@@ -35,12 +36,20 @@ def start_time(from_disk):
 
 def main():
     t0 = start_time('--load' in sys.argv)
- 
+    s = time.time()
+
     while True:
         t = int(time.time()) - t0
         connection.write(str(t) + '.')
-       
-        time.sleep(rate) 
+        print "sending " + str(t) + ". to arduino"
+
+        if time.time() - s < 15:
+            print "short gap to improve sync"
+            time.sleep(2)
+        else:
+            print "normal gap"
+            time.sleep(rate)
+
         while connection.inWaiting() > 0:
             print connection.readline()
 
