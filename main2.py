@@ -10,20 +10,21 @@ connection = serial.Serial('/dev/ttyACM0', 9600, timeout=0.050)
 current_state = ['NULL'] * 256
 
 def start_time(from_disk):
-    if from_disk:
-        try:
-            f = open('start_time.txt', 'r') 
-            result = int(f.readlines()[0].strip())
-            f.close()
-            print "loading from start time: " + str(result)
-            return result
-        except:
-            pass
-    result = int(time.time())
-    f = open('start_time.txt', 'w')
-    f.write(str(result))    
-    f.close()
-    return result
+    return 1522886400 -3600
+    #if from_disk:
+    #    try:
+    #        f = open('start_time.txt', 'r') 
+    #        result = int(f.readlines()[0].strip())
+    #        f.close()
+    #        print "loading from start time: " + str(result)
+    #        return result
+    #    except:
+    #        pass
+    #result = int(time.time())
+    #f = open('start_time.txt', 'w')
+    #f.write(str(result))    
+    #f.close()
+    #return result
 
 def main():
     t0 = start_time('--load' in sys.argv)
