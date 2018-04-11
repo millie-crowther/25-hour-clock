@@ -38,32 +38,10 @@ void setup(){
   last_update = millis();
 }
 
-boolean get_value(int val, int segment){
-  if (segment == 0){
-    return val != 1 && val != 4;
-
-  } else if (segment == 1){
-    return val != 5 && val != 6;
-
-  } else if (segment == 2){
-    return val != 2;
-
-  } else if (segment == 3){
-    return val != 1 && val != 4 && val != 7;
-
-  } else if (segment == 4){
-    return val == 0 || val == 2 || val == 6 || val == 8;
-
-  } else if (segment == 5){
-    return val != 1 && val != 2 && val != 3 && val != 7;
-
-  } else {
-    return val != 0 && val != 1 && val != 7;
-  } 
-}
-
-void output(){
+void output(boolean isOn){
   unsigned long t = start + ((millis() - last_update) / 1000);
+  Serial.print(t);
+  Serial.println("t");
   int h = (t / 3600) % 25;
   int m = (t / 60) % 60;
   int s = t % 60;
@@ -73,6 +51,10 @@ void output(){
     m / 10, m % 10,
     s / 10, s % 10
   };
+  for (int i = 0; i < 6; i++){
+    //Serial.print(digits[i]);
+  }
+  Serial.println("t");
 
   // do shift register output
   byte data[3] = {0, 0, 0};
@@ -80,10 +62,9 @@ void output(){
   for (int digit = 0; digit < 6; digit++){
     for (int segment = 0; segment < 7; segment++){
       int i = digit * 7 + segment;
-      boolean isOn = get_value(digits[digit], segment);
     
       if (pins[i] != -1){
-        digitalWrite(pins[i], isOn ? LOW : HIGH);
+        digitalWrite(pins[i], isOn ? HIGH : LOW);
       }
 
       int b = bits[i];
@@ -115,7 +96,9 @@ void loop(){
     delay(10);
   }
   
-  output();
-  delay(15);
+  output(true);
+  delay(2000);
+  output(false);
+  delay(2000);
 }
 

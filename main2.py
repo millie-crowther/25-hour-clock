@@ -29,9 +29,11 @@ def start_time(from_disk):
 def main():
     t0 = start_time('--load' in sys.argv)
     s = time.time()
+    isDoc = '--doc' in sys.argv
 
     while True:
-        t = int(time.time()) - t0
+        #t = (int(time.time()) - t0)       
+        t = (24*60*60) if isDoc else (int(time.time()) - t0)
         connection.write(str(t) + '.')
         print "sending " + str(t) + ". to arduino"
 
