@@ -21,7 +21,7 @@ def t2():
 
 def start_time(live_doc):
     if live_doc:
-       return int(time.time()) - t2()
+        return int(time.time()) - t2()
     else: 
         return 1522886400 -3600
 
