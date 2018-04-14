@@ -3,28 +3,24 @@ import os
 import serial
 import sys
 
+hours_doc = 24
+minutes_doc = 0
+seconds_doc = 0
+
 rate = 60 
-cmd = '~/arduino-1.8.5/arduino --upload --port /dev/ttyACM0 ~/25-hour-clock/arduino_code2/arduino_code2.ino'
+cmd1 = '~/arduino-1.8.5/arduino --upload --port /dev/ttyACM0 ~/25-hour-clock/arduino_code2/arduino_code2.ino'
+cmd2 = '~/arduino-1.8.5/arduino --upload --port /dev/ttyACM0 ~/25-hour-clock/arduino_doc/arduino_doc.ino'
+cmd = cmd2 if ('--doc' in sys.argv) else cmd1
 os.system(cmd)
+
 connection = serial.Serial('/dev/ttyACM0', 9600, timeout=0.050)
 current_state = ['NULL'] * 256
 
 def start_time(from_disk):
     return 1522886400 -3600
-    #if from_disk:
-    #    try:
-    #        f = open('start_time.txt', 'r') 
-    #        result = int(f.readlines()[0].strip())
-    #        f.close()
-    #        print "loading from start time: " + str(result)
-    #        return result
-    #    except:
-    #        pass
-    #result = int(time.time())
-    #f = open('start_time.txt', 'w')
-    #f.write(str(result))    
-    #f.close()
-    #return result
+
+def t2():
+    return hours_doc*60*60 + minutes_doc*60 + seconds_doc
 
 def main():
     t0 = start_time('--load' in sys.argv)
@@ -33,7 +29,7 @@ def main():
 
     while True:
         #t = (int(time.time()) - t0)       
-        t = (24*60*60) if isDoc else (int(time.time()) - t0)
+        t = t2() if isDoc else (int(time.time()) - t0)
         connection.write(str(t) + '.')
         print "sending " + str(t) + ". to arduino"
 
