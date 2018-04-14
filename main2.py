@@ -20,10 +20,10 @@ def t2():
     return hours_doc*60*60 + minutes_doc*60 + seconds_doc
 
 def start_time(live_doc):
-    if live_doc:
-        return int(time.time()) - t2()
-    else: 
-        return 1522886400 -3600
+#    if live_doc:
+    return int(time.time()) - t2()
+#    else: 
+#        return 1522886400 -3600
 
 def main():
     t0 = start_time('--live-doc' in sys.argv)
